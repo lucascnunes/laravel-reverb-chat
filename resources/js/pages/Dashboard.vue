@@ -4,9 +4,8 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import type { PageProps } from '@inertiajs/core';
 import { Head, router, useForm, usePage } from '@inertiajs/vue3';
-import axios from 'axios';
 import { Send } from 'lucide-vue-next';
-import { onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
+import { onMounted, onUnmounted, toRef, useTemplateRef } from 'vue';
 import PlaceholderPattern from '../components/PlaceholderPattern.vue';
 import { Input } from '../components/ui/input';
 import { ScrollArea } from '../components/ui/scroll-area';
@@ -37,7 +36,7 @@ const props = defineProps<{
     messages: Messages;
 }>();
 
-const messages = ref(props.messages);
+const messages = toRef(props.messages);
 const scrollArea = useTemplateRef('scrollArea');
 
 const user = usePage<PageProps & { auth: { user: User | undefined } }>().props.auth?.user as User | undefined;
@@ -58,28 +57,35 @@ function handleSendMessage() {
             message: form.message,
         },
         {
-            preserveState: false,
+            preserveState: true,
             preserveScroll: true,
             onSuccess: () => {
                 form.reset();
                 document.getElementById('message-input')?.focus();
             },
+            onError: (errors) => {
+                console.error(errors);
+            },
         },
     );
 }
 
-function getMessages() {
-    axios.get(route('messages.index')).then((response) => {
-        messages.value = response.data;
+function handleScrollToBottom() {
+    scrollArea.value?.$el.querySelector('[data-reka-scroll-area-viewport]')?.scrollTo({
+        top: Math.abs(scrollArea.value.$el.querySelector('[data-reka-scroll-area-viewport]').scrollHeight),
+        behavior: 'smooth',
     });
 }
 
 onMounted(() => {
-    console.log('connecting ' + Echo.channel(webSocketChannel).name);
-    Echo.private(webSocketChannel).listen('GotMessage', () => {
-        // updating the whole array will be taxing to the frontend in the long run
-        getMessages();
-        // messages.value.push(e.message);
+    handleScrollToBottom();
+
+    //  console.log('connecting ' + Echo.channel(webSocketChannel).name);
+    Echo.private(webSocketChannel).listen('GotMessage', (data: { message: Message }) => {
+        messages.value.push(data.message);
+        setTimeout(() => {
+            handleScrollToBottom();
+        }, 200);
     });
 });
 
@@ -93,14 +99,12 @@ onUnmounted(() => {
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-            <div
-                class="relative flex-1 overflow-y-auto overflow-x-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border md:min-h-min"
-            >
+            <div class="relative flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 pl-4 pt-1 dark:border-sidebar-border">
                 <template v-if="messages?.length > 0">
                     <ScrollArea
                         type="always"
+                        class="relative bottom-5 left-0 right-0 top-0 z-10 flex max-h-[72vh] w-full flex-col items-start justify-end space-y-2 pr-4"
                         ref="scrollArea"
-                        class="absolute bottom-0 left-0 right-0 top-0 z-10 flex h-full max-h-[82vh] min-h-[82vh] w-full flex-col items-start justify-end space-y-2 p-4"
                     >
                         <div class="flex w-full items-center justify-between gap-10" v-for="message in messages" :key="message.id">
                             <span class="inline-flex items-center justify-start">
@@ -111,7 +115,7 @@ onUnmounted(() => {
                                     {{ message.text }}
                                 </span>
                             </span>
-                            <small class="text-gray-200">
+                            <small class="shrink-0 text-gray-200">
                                 {{ message.time }}
                             </small>
                         </div>
@@ -129,6 +133,7 @@ onUnmounted(() => {
                             @disabled="form.processing"
                             autofocus
                             placeholder="Type your message..."
+                            class="pr-10"
                         />
                         <Button type="submit" variant="ghost" class="absolute right-0 top-0 z-10 h-full">
                             <Send class="size-4" />
