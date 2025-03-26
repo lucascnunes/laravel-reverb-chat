@@ -1,0 +1,61 @@
+{
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "vite build",
+        "build:ssr": "vite build && vite build --ssr",
+        "dev": "vite",
+        "format": "prettier --write resources/",
+        "format:check": "prettier --check resources/",
+        "lint": "eslint . --fix"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.22.0",
+        "@types/node": "^22.13.10",
+        "@vue/eslint-config-typescript": "^14.5.0",
+        "eslint": "^9.22.0",
+        "eslint-config-prettier": "^10.1.1",
+        "eslint-plugin-vue": "^9.33.0",
+        "laravel-echo": "^2.0.2",
+        "prettier": "^3.5.3",
+        "prettier-plugin-organize-imports": "^4.1.0",
+        "prettier-plugin-tailwindcss": "^0.6.11",
+        "typescript-eslint": "^8.26.1",
+        "vue-tsc": "^2.2.8"
+    },
+    "dependencies": {
+        "@inertiajs/vue3": "^2.0.5",
+        "@vitejs/plugin-vue": "^5.2.1",
+        "@vueuse/core": "^12.8.2",
+        "autoprefixer": "^10.4.21",
+        "axios": "^1.8.3",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "concurrently": "^9.1.2",
+        "laravel-vite-plugin": "^1.2.0",
+        "lucide": "^0.468.0",
+        "lucide-vue-next": "^0.468.0",
+        "pusher-js": "^8.4.0",
+        "radix-vue": "^1.9.17",
+        "reka-ui": "^2.0.2",
+        "tailwind-merge": "^2.6.0",
+        "tailwindcss": "^3.4.17",
+        "tailwindcss-animate": "^1.0.7",
+        "typescript": "^5.8.2",
+        "vite": "^6.2.2",
+        "vue": "^3.5.13",
+        "ziggy-js": "^2.5.2"
+    },
+    "optionalDependencies": {
+        "@rollup/rollup-linux-x64-gnu": "4.9.5",
+        "@tailwindcss/oxide-linux-x64-gnu": "^4.0.14",
+        "lightningcss-linux-x64-gnu": "^1.29.3"
+    },
+    "packageManager": "pnpm@10.5.2+sha512.da9dc28cd3ff40d0592188235ab25d3202add8a207afbedc682220e4a0029ffbff4562102b9e6e46b4e3f9e8bd53e6d05de48544b0c57d4b0179e22c76d1199b",
+    "pnpm": {
+        "ignoredBuiltDependencies": [
+            "esbuild",
+            "vue-demi"
+        ]
+    }
+}
