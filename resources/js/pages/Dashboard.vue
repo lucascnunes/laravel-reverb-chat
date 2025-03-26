@@ -76,7 +76,7 @@ function getMessages() {
 
 onMounted(() => {
     console.log('connecting ' + Echo.channel(webSocketChannel).name);
-    Echo.private(webSocketChannel).listen('GotMessage', (e) => {
+    Echo.private(webSocketChannel).listen('GotMessage', () => {
         // updating the whole array will be taxing to the frontend in the long run
         getMessages();
         // messages.value.push(e.message);

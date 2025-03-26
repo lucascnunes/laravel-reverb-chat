@@ -14,7 +14,8 @@ class GotMessage implements ShouldBroadcast
 
     /**
      * Create a new event instance.
-     * @param array<int,mixed> $message
+     *
+     * @param  array<int,mixed>  $message
      */
     public function __construct(public array $message)
     {
